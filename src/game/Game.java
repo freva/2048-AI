@@ -27,7 +27,7 @@ public class Game extends JPanel {
         }
 
         Integer[] tiles = new Integer[16];
-        for(int i=0; i<64; i+=4) tiles[i] = 1 << ((board.getBoard()>>i) & Board.CELL_MASK);
+        for(int i=0; i<64; i+=4) tiles[i>>2] = 1 << ((board.getBoard()>>i) & Board.CELL_MASK);
         Arrays.sort(tiles, Collections.reverseOrder());
         System.out.println("Score: " + board.getScore() + " | Moves: " + board.getMoves() + " | Time: " + board.getTimeSpent() + "ms | Tiles: " + Arrays.toString(Arrays.copyOfRange(tiles, 0, 5)));
     }
@@ -53,6 +53,6 @@ public class Game extends JPanel {
         game.setLocationRelativeTo(null);
         game.setVisible(true);
 
-         p.AI(gts, depth);
+        p.AI(gts, depth);
     }
 }

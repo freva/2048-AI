@@ -132,6 +132,7 @@ public class Board {
         return threes | six | nines | nThrees | nSix | nNines | zeros;
     }
 
+
     private static int reverseRow(int row) {
         return (row >> 12) | ((row >> 4) & 0x00F0)  | ((row << 4) & 0x0F00) | ((row << 12) & 0xF000);
     }
