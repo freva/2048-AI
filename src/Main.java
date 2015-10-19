@@ -6,6 +6,6 @@ import game.Game;
 public class Main {
 
     public static void main(String[] args) {
-        Game.startNewGame(new Expectimax(GridHeuristic.CORNER_GRADIENT_EDGE_PRIORITY), 4);
+        Game.startNewGame(new Expectimax(GridHeuristic.CORNER_GRADIENT_EDGE_PRIORITY), 5);
     }
 }
