@@ -15,7 +15,10 @@ public abstract class GameTreeSearch {
 
 
     public int getBestMove(long board, final int depth) {
-        double[] scores = IntStream.range(0, 4).mapToLong(i -> move(board, i)).parallel().mapToDouble(i -> (i != board ? search(i, depth - 1) : Double.MIN_VALUE)).toArray();
+        final double[] scores = IntStream.range(0, 4)
+                .mapToLong(i -> move(board, i))
+                .mapToDouble(i -> (i != board ? search(i, depth - 1) : Double.MIN_VALUE))
+                .toArray();
         return IntStream.range(0, 4).reduce((a, b) -> scores[a] < scores[b] ? b : a).getAsInt();
     }
 

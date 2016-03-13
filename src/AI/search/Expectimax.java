@@ -3,6 +3,8 @@ package AI.search;
 import AI.heuristic.Heuristic;
 import game.Board;
 
+import java.util.stream.IntStream;
+
 import static game.Board.isLost;
 import static game.Board.move;
 
@@ -23,23 +25,19 @@ public class Expectimax extends GameTreeSearch {
     }
 
 
-    private double expectimax(long board, int depth, boolean maximizingPlayer, double cprob) {
+    private double expectimax(long board, int depth, boolean maximizingPlayer, final double cprob) {
         if (depth == 0 || cprob < probabilityCutoff) return evaluate(board);
         else if (isLost(board)) return 1;
 
         if (maximizingPlayer) {
-            double bestValue = Double.MIN_VALUE;
-            for (int direction = 0; direction < 4; direction++) {
-                long temp = move(board, direction);
-                if (temp == board) continue;
-
-                double val = expectimax(temp, depth - 1, false, cprob);
-                if (val > bestValue) bestValue = val;
-            }
-            return bestValue;
+            return IntStream.range(0, 4)
+                    .mapToLong(i -> move(board, i))
+                    .parallel()
+                    .mapToDouble(i -> (i != board ? expectimax(i, depth - 1, false, cprob) : Double.MIN_VALUE))
+                    .max().getAsDouble();
         } else {
             double totalScore = 0, totalWeight = 0;
-            cprob /= Board.numFreeCells(board);
+            double newProb = cprob/Board.numFreeCells(board);
 
             for (int i = 0; i < 64; i += 4) {
                 if (((board >> i) & Board.CELL_MASK) != 0) continue;
@@ -49,7 +47,7 @@ public class Expectimax extends GameTreeSearch {
                     temp |= tile << i;
 
                     double prob = (tile == 1) ? 0.9f : 0.1f;
-                    totalScore += expectimax(temp, depth - 1, true, cprob*prob) * prob;
+                    totalScore += expectimax(temp, depth - 1, true, newProb*newProb) * prob;
                     totalWeight += prob;
                 }
             }
